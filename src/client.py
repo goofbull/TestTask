@@ -4,12 +4,12 @@ import socket
 def client_program():
     # Создаем хост и порт
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Создание TCP сокета
-    port = 5000  # Выбираем порт
+    port: int = 5000  # Выбираем порт
 
     print('connecting to server...')
     sock.connect(('localhost', port))  # Присоединение к серверу
 
-    filename = 'received_file.txt'
+    filename: str = 'received_file.txt'
 
     with open(filename, 'wb') as file:
         print('the downloading has started')

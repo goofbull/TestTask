@@ -4,7 +4,7 @@ import socket
 def server_program():
     # Создаем хост и порт
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Создание TCP сокета
-    port = 5000  # Выбор порта
+    port: int = 5000  # Выбор порта
  
     sock.bind(('localhost', port))  # Привязка адреса хоста и порта
 
@@ -13,7 +13,7 @@ def server_program():
     conn, address = sock.accept()  # Принимаем новое подключение
     print("connection from: " + str(address))
 
-    filename = 'random_file.txt'
+    filename: str = 'random_file.txt'
     
     with open(filename, 'rb') as file:
         print('opening the file...')
