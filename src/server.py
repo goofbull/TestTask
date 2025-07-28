@@ -18,7 +18,7 @@ def server_program():
     filename: str = 'random_file.txt'
     with open(filename, 'rb') as file:
         print('opening the file...')
-        while chunk := file.read(buffer_size):  # Читаем файл частями,
+        while chunk := file.read(buffer_size):  # Читаем файл чанками, т.к максимальный размер udp пакета - 65,507 байт
             sock.sendto(chunk, addr)
             time.sleep(0.001)  # Даем время между отправками чанков, чтобы не было перегруза
 
