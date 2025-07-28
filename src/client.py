@@ -3,19 +3,23 @@ import socket
 
 def client_program():
     # Создаем хост и порт
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Создание TCP сокета
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Создание UDP сокета
+    host = 'localhost'
     port: int = 5000  # Выбираем порт
+    buffer_size: int = 1024  # Размер буффера
 
-    print('connecting to server...')
-    sock.connect(('localhost', port))  # Присоединение к серверу
+    sock.sendto(b'', (host, port))  # Отправляем пустое сообщение, чтобы подключиться к серверу
 
+    # Создаем файл для записи
     filename: str = 'received_file.txt'
-
     with open(filename, 'wb') as file:
         print('the downloading has started')
-        data = sock.recv(2*1024*1024)  # Читаем 2 мегабайта
-        file.write(data)  # Записываем содержимое
-
+        while True:
+            data, addr = sock.recvfrom(buffer_size)
+            if data == b'end':
+                break
+            file.write(data)
+            
     file.close()  # Закрываем файл
     print('done downloading')
 

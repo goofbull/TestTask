@@ -1,28 +1,31 @@
 import socket
+import time
 
 
 def server_program():
     # Создаем хост и порт
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Создание TCP сокета
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Создание UDP сокета
+    host = 'localhost'
     port: int = 5000  # Выбор порта
- 
-    sock.bind(('localhost', port))  # Привязка адреса хоста и порта
+    buffer_size: int = 1024  # Размер буффера
 
-    sock.listen(2)  # Конфигурируем сколько всего клиентов смогут прослушивать сервер одновременно
-    
-    conn, address = sock.accept()  # Принимаем новое подключение
-    print("connection from: " + str(address))
+    sock.bind((host, port))  # Привязка адреса хоста и порта
 
+    data, addr = sock.recvfrom(buffer_size)  # Получаем пустое сообщение
+    print(f'{addr} has been connected to the server')
+
+    # Читаем файл для последующей отправки клиенту
     filename: str = 'random_file.txt'
-    
     with open(filename, 'rb') as file:
         print('opening the file...')
-        data = file.read(2*1024*1024)  # Читаем 2 мегабайта
-        conn.send(data)  # Отсылаем файл
+        while chunk := file.read(buffer_size):  # Читаем файл частями,
+            sock.sendto(chunk, addr)
+            time.sleep(0.001)  # Даем время между отправками чанков, чтобы не было перегруза
 
+    sock.sendto(b'end', addr)  # Отсылаем сообщение, что это конец файла
+    sock.close()  # Заывершаем сеанс
     file.close()  # Закрываем файл
     print('the file has been sent')
-    conn.close()  # Завершаем сессию
 
 if __name__ == '__main__':
     server_program()
